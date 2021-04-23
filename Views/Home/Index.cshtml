@@ -1,0 +1,94 @@
+﻿@model IEnumerable<CRUD.Models.Obj>
+@{
+    ViewData["Title"] = "CRUD";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Faça seu CRUD!</h1>
+    <form action="@Url.Action("CreateDataObject", "Home")" method="post">
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="inputCentroDeCusto">Prop 1</label>
+                <input type="text" class="form-control" name="prop1" placeholder="Prop 1">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="inputDescricao">Prop 2</label>
+                <input type="text" class="form-control" name="prop2" placeholder="Prop 2">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+@if (Model.Count() != 0)
+{
+    <table class="table tablesorter " id="" data-toggle="table" data-search="true">
+        <thead class=" text-primary">
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Propriedade 1
+                </th>
+                <th>
+                    Propriedade 2
+                </th>
+                <th>
+                    Ação
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Id
+                    </td>
+                    <td>
+                        <input name="prop1" id="@String.Concat(@item.Id,"prop1")" value="@item.Prop1" />
+                    </td>
+                    <td>
+                        <input name="prop2" id="@String.Concat(@item.Id,"prop2")" value="@item.Prop2" />
+                    </td>
+                    <td>
+                        <a href="#" onclick="updateDataObject(@item.Id)" class="btn btn-primary">
+                            Salvar
+                        </a>
+                        <a href="@Url.Action("DeleteDataObject","Home", new { id = item.Id })" class="btn btn-primary">
+                            Excluir
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<script>
+    function updateDataObject(id) {
+        var $prop1 = $("#" + id + "prop1").val();
+        var $prop2 = $("#" + id + "prop2").val();
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UpdateDataObject","Home")',
+            data: { Prop1: $prop1, Prop2: $prop2, Id: id  },
+            success: function (data) {
+                if (data == "ok") {
+                    window.location.reload();
+                }
+                else {
+                    alert(data);
+                }
+            },
+            error: function (error) {
+                alert("Erro: " + error);
+            }
+        })
+
+    }
+</script>
+
